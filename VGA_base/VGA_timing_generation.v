@@ -42,22 +42,22 @@ module VGA_timing_generation #(
     always @ (posedge clk)
         if(!reset)
         begin
-            h_pos = 0;
-            v_pos = 0;
+            h_pos <= 0;
+            v_pos <= 0;
         end
         else
             if(pixel_tick)
             begin
                 if(h_pos == ticks_per_line - 1)
                 begin
-                    h_pos = 0;
+                    h_pos <= 0;
                     if(v_pos == lines_per_frame - 1)
-                        v_pos = 0;
+                        v_pos <= 0;
                     else
-                        v_pos = v_pos + 1;
+                        v_pos <= v_pos + 1;
                 end
                 else
-                    h_pos = h_pos + 1;
+                    h_pos <= h_pos + 1;
             end
 
 
