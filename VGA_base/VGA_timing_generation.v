@@ -23,20 +23,17 @@ module VGA_timing_generation #(
     localparam ticks_per_line = h_size + h_front_porch + h_sync_pulse + h_back_porsh;
     localparam lines_per_frame = v_line + v_front_porch + v_sync_pulse + v_back_porsh;
     localparam ticks_per_frame = ticks_per_line * lines_per_frame;
-    localparam freq_div = clk_freq / (ticks_per_frame * refresh_rate);
+    localparam freq_div = clk_freq / (ticks_per_frame * refresh_rate) + (clk_freq % (ticks_per_frame * refresh_rate) > (ticks_per_frame * refresh_rate) / 2 ? 1 : 0); //clk_freq / (tpf * ref_rate) rounded to closest
 
     //Generating pixel-tick clock
     wire pixel_tick;
     //wire [$clog2(freq_div)-1:0] freq_div_wire = freq_div;
-    wire [100:0] freq_div_wire = freq_div;
-    wire [100:0] tpl_w = ticks_per_line;
-    wire [100:0] tpf_w = ticks_per_frame;
-    wire [100:0] lpf_w = lines_per_frame;
+    wire [$clog2(freq_div):0] freq_div_wire = freq_div;
     reflet_counter #(.size($clog2(freq_div)+1)) tick_gen (
         .clk(clk),
         .reset(reset),
         .enable(1'b1),
-        .max(freq_div),
+        .max(freq_div_wire),
         .out(pixel_tick));
 
     //keeping track of the where we are

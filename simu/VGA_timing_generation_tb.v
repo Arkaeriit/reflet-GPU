@@ -6,10 +6,10 @@ module VGA_timing_generation_tb();
     reg reset = 0;
 
     wire h_sync, v_sync;
-    wire [8:0] h_pixel;
-    wire [9:0] v_pixel;
+    wire [9:0] h_pixel;
+    wire [8:0] v_pixel;
 
-    VGA_timing_generation #(.clk_freq(60000000)) vga (
+    VGA_timing_generation #(.clk_freq(50000000)) vga (
         .clk(clk),
         .reset(reset),
         .h_sync(h_sync),
