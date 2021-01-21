@@ -60,7 +60,7 @@ endmodule
 
 module coord_to_addr #(
     parameter h_size = 640,
-    v_line = 480,
+    v_line = 480
     )(
     input clk,
     input [$clog2(h_size)-1:0] h_pixel,
@@ -68,7 +68,7 @@ module coord_to_addr #(
     output reg [$clog2(h_size * v_line)-1:0] addr
     );
 
-    always @ (posedge clk)
+    always @ (posedge clk) //A very simple way to compute the addr but I keep it in a separate module if I need to change it.
         addr <= v_pixel * h_size + h_pixel;
 
 endmodule
