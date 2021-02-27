@@ -19,14 +19,15 @@ module reflet_VGA #(
     v_sync_pulse = 2,
     v_back_porsh = 33,
     color_depth = 8,
-    ram_resetable = 0
+    ram_resetable = 0,
+    bit_reduction = 0
     )(
     input clk,
     input reset,
     //Pixel input
     input write_en,
-    input [$clog2(h_size)-1:0] h_pixel,
-    input [$clog2(v_line)-1:0] v_pixel,
+    input [$clog2(h_size)-bit_reduction-1:0] h_pixel,
+    input [$clog2(v_line)-bit_reduction-1:0] v_pixel,
     input [color_depth-1:0] R_in,
     input [color_depth-1:0] G_in,
     input [color_depth-1:0] B_in,
@@ -38,9 +39,11 @@ module reflet_VGA #(
     output [color_depth-1:0] B_out
     );
 
+    localparam reduction_factor = 2 ** bit_reduction;
+
     //Timing generator
-    wire [$clog2(h_size)-1:0] h_pixel_out;
-    wire [$clog2(v_line)-1:0] v_pixel_out;
+    wire [$clog2(h_size)-bit_reduction-1:0] h_pixel_out;
+    wire [$clog2(v_line)-bit_reduction-1:0] v_pixel_out;
     VGA_timing_generation #(
         .clk_freq(clk_freq),
         .refresh_rate(refresh_rate),
@@ -51,7 +54,8 @@ module reflet_VGA #(
         .v_line(v_line),
         .v_front_porch(v_front_porch),
         .v_sync_pulse(v_sync_pulse),
-        .v_back_porsh(v_back_porsh))
+        .v_back_porsh(v_back_porsh),
+        .bit_reduction(bit_reduction))
     timing (
         .clk(clk),
         .reset(reset),
@@ -62,8 +66,8 @@ module reflet_VGA #(
 
     //Memories
     pixel_memory #(
-        .h_size(h_size),
-        .v_line(v_line),
+        .h_size(h_size/reduction_factor),
+        .v_line(v_line/reduction_factor),
         .color_depth(color_depth),
         .ram_resetable(ram_resetable))
     memory_red (
@@ -72,14 +76,14 @@ module reflet_VGA #(
         .write_en(write_en),
         .h_pixel_read(h_pixel_out),
         .v_pixel_read(v_pixel_out),
-        .h_pixel_write(h_pixe),
-        .v_pixel(v_pixel_out),
+        .h_pixel_write(h_pixel),
+        .v_pixel_write(v_pixel),
         .color_write(R_in),
         .color_read(R_out));
 
     pixel_memory #(
-        .h_size(h_size),
-        .v_line(v_line),
+        .h_size(h_size/reduction_factor),
+        .v_line(v_line/reduction_factor),
         .color_depth(color_depth),
         .ram_resetable(ram_resetable))
     memory_green (
@@ -88,14 +92,14 @@ module reflet_VGA #(
         .write_en(write_en),
         .h_pixel_read(h_pixel_out),
         .v_pixel_read(v_pixel_out),
-        .h_pixel_write(h_pixe),
-        .v_pixel(v_pixel_out),
+        .h_pixel_write(h_pixel),
+        .v_pixel_write(v_pixel),
         .color_write(G_in),
         .color_read(G_out));
     
     pixel_memory #(
-        .h_size(h_size),
-        .v_line(v_line),
+        .h_size(h_size/reduction_factor),
+        .v_line(v_line/reduction_factor),
         .color_depth(color_depth),
         .ram_resetable(ram_resetable))
     memory_blue (
@@ -104,8 +108,8 @@ module reflet_VGA #(
         .write_en(write_en),
         .h_pixel_read(h_pixel_out),
         .v_pixel_read(v_pixel_out),
-        .h_pixel_write(h_pixe),
-        .v_pixel(v_pixel_out),
+        .h_pixel_write(h_pixel),
+        .v_pixel_write(v_pixel),
         .color_write(B_in),
         .color_read(B_out));
 

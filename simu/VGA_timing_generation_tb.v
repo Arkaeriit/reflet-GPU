@@ -9,7 +9,15 @@ module VGA_timing_generation_tb();
     wire [9:0] h_pixel;
     wire [8:0] v_pixel;
 
-    VGA_timing_generation #(.clk_freq(50000000)) vga (
+    VGA_timing_generation #(.clk_freq(50000000), .bit_reduction(1)) vga_reduced (
+        .clk(clk),
+        .reset(reset));
+
+    VGA_timing_generation #(.clk_freq(50000000), .bit_reduction(3)) vga_reduced_more (
+        .clk(clk),
+        .reset(reset));
+
+    VGA_timing_generation #(.clk_freq(50000000), .bit_reduction(0)) vga_raw (
         .clk(clk),
         .reset(reset),
         .h_sync(h_sync),
