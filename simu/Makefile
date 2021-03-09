@@ -1,14 +1,25 @@
 
-all : VGA_timing_generation_tb.vcd
+MODULES = ../misc_modules/reflet_counter.v ../misc_modules/reflet_ram.v ../VGA_base/pixel_memory.v ../VGA_base/reflet_VGA.v ../VGA_base/VGA_timing_generation.v
 
-VGA_timing_generation_tb.vvp : VGA_timing_generation_tb.v ../misc_modules/reflet_counter.v ../VGA_base/VGA_timing_generation.v
-	iverilog VGA_timing_generation_tb.v ../misc_modules/reflet_counter.v ../VGA_base/VGA_timing_generation.v -o VGA_timing_generation_tb.vvp
+all : VGA_timing_generation_tb.vcd reflet_VGA_tb.vcd
+
+VGA_timing_generation_tb.vvp : VGA_timing_generation_tb.v $(MODULES)
+	iverilog VGA_timing_generation_tb.v $(MODULES) -o VGA_timing_generation_tb.vvp
 
 VGA_timing_generation_tb.vcd : VGA_timing_generation_tb.vvp
 	vvp VGA_timing_generation_tb.vvp
 
 VGA_timing_generation_tb : VGA_timing_generation_tb.vcd
 	gtkwave VGA_timing_generation_tb.vcd
+
+reflet_VGA_tb.vvp : reflet_VGA_tb.v $(MODULES)
+	iverilog reflet_VGA_tb.v $(MODULES) -o reflet_VGA_tb.vvp
+
+reflet_VGA_tb.vcd : reflet_VGA_tb.vvp
+	vvp reflet_VGA_tb.vvp
+
+reflet_VGA_tb : reflet_VGA_tb.vcd
+	gtkwave reflet_VGA_tb.vcd
 
 clean :
 	rm -f *.vcd

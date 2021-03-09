@@ -2,6 +2,8 @@
 |This module contains a block  |
 |of RAM that can be            |
 |accessed with X/Y coordinates.|
+|When the X or Y coordinates   |
+|are ~0, the output is 0.      |
 \-----------------------------*/
 
 module pixel_memory #(
@@ -24,6 +26,8 @@ module pixel_memory #(
     localparam ram_size = h_size * v_line;
     localparam addr_size = $clog2(ram_size);
 
+    wire [color_depth-1:0] color_read_mem;
+
     //addr signals
     wire [addr_size-1:0] addr_read;
     coord_to_addr #(.h_size(h_size), .v_line(v_line)) addr_read_gen (
@@ -42,12 +46,14 @@ module pixel_memory #(
     reflet_ram #(.addrSize(addr_size), .size(ram_size), .depth(color_depth), .resetable(ram_resetable)) ram (
         .clk(clk),
         .reset(reset),
-        .enable(1'b1),
+        .enable(h_pixel_read < h_size && v_pixel_read < v_line),
         .addr_read(addr_read),
         .addr_write(addr_write),
         .data_in(color_write),
-        .data_out(color_read),
+        .data_out(color_read_mem),
         .write_en(write_en));
+
+    assign color_read = (&h_pixel_read && &v_pixel_read ? 0 : color_read_mem);
 
 endmodule
 
