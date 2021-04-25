@@ -46,14 +46,14 @@ module pixel_memory #(
     reflet_ram #(.addrSize(addr_size), .size(ram_size), .depth(color_depth), .resetable(ram_resetable)) ram (
         .clk(clk),
         .reset(reset),
-        .enable(h_pixel_read < h_size && v_pixel_read < v_line),
+        .enable(1'b1),
         .addr_read(addr_read),
         .addr_write(addr_write),
         .data_in(color_write),
         .data_out(color_read_mem),
         .write_en(write_en));
 
-    assign color_read = (&h_pixel_read && &v_pixel_read ? 0 : color_read_mem);
+    assign color_read = (h_pixel_read >= h_size || v_pixel_read >= v_line ? 0 : color_read_mem);
 
 endmodule
 
