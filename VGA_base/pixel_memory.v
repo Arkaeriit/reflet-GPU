@@ -43,7 +43,7 @@ module pixel_memory #(
         .addr(addr_write));
 
     //Ram block
-    reflet_ram #(.addrSize(addr_size), .size(ram_size), .depth(color_depth), .resetable(ram_resetable)) ram (
+    reflet_ram_dual_port #(.addrSize(addr_size), .size(ram_size), .depth(color_depth), .resetable(ram_resetable)) ram (
         .clk(clk),
         .reset(reset),
         .enable(1'b1),

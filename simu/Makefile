@@ -1,5 +1,5 @@
 
-MODULES = ../misc_modules/reflet_counter.v ../misc_modules/reflet_ram.v ../VGA_base/pixel_memory.v ../VGA_base/reflet_VGA.v ../VGA_base/VGA_timing_generation.v
+MODULES = ../misc_modules/reflet_counter.v ../misc_modules/reflet_ram_dual_port.v ../VGA_base/pixel_memory.v ../VGA_base/reflet_VGA.v ../VGA_base/VGA_timing_generation.v
 
 all : VGA_timing_generation_tb.vcd reflet_VGA_tb.vcd
 

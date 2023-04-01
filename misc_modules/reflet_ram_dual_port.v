@@ -5,7 +5,7 @@
 standard synchronous RAM.               |
 \--------------------------------------*/
 
-module reflet_ram #(
+module reflet_ram_dual_port #(
     parameter addrSize = 7,
     size = 128,
     depth = 8,
