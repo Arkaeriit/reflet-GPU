@@ -65,7 +65,7 @@ module VGA_timing_generation #(
 
     //generating output signal
     assign h_pixel = ( h_pos < h_size ? h_pos : ~0 );
-    assign v_pixel = ( v_pos < v_line ? v_pos >> bit_reduction : 0 );
+    assign v_pixel = ( v_pos < v_line ? v_pos >> bit_reduction : ~0 );
     assign h_sync = !(h_pos * reduction_factor >= h_size + h_front_porch && h_pos * reduction_factor < h_size + h_front_porch + h_sync_pulse);
     assign v_sync = !(v_pos >= v_line + v_front_porch && v_pos < v_line + v_front_porch + v_sync_pulse);
 
