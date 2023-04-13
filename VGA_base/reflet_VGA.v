@@ -31,6 +31,7 @@ module reflet_VGA #(
     input [color_depth-1:0] R_in,
     input [color_depth-1:0] G_in,
     input [color_depth-1:0] B_in,
+    input [color_depth-1:0] a_in,
     //VGA output
     output h_sync,
     output v_sync,
@@ -64,54 +65,29 @@ module reflet_VGA #(
         .h_pixel(h_pixel_out),
         .v_pixel(v_pixel_out));
 
-    //Memories
-    pixel_memory #(
-        .h_size(h_size/reduction_factor),
-        .v_line(v_line/reduction_factor),
+    // Bitmap layer
+    reflet_VGA_bitmap #(
+        .h_size(h_size),
+        .v_line(v_line),
         .color_depth(color_depth),
-        .ram_resetable(ram_resetable))
-    memory_red (
+        .ram_resetable(ram_resetable),
+        .bit_reduction(bit_reduction))
+    bitmap (
         .clk(clk),
         .reset(reset),
         .write_en(write_en),
-        .h_pixel_read(h_pixel_out),
-        .v_pixel_read(v_pixel_out),
-        .h_pixel_write(h_pixel),
-        .v_pixel_write(v_pixel),
-        .color_write(R_in),
-        .color_read(R_out));
-
-    pixel_memory #(
-        .h_size(h_size/reduction_factor),
-        .v_line(v_line/reduction_factor),
-        .color_depth(color_depth),
-        .ram_resetable(ram_resetable))
-    memory_green (
-        .clk(clk),
-        .reset(reset),
-        .write_en(write_en),
-        .h_pixel_read(h_pixel_out),
-        .v_pixel_read(v_pixel_out),
-        .h_pixel_write(h_pixel),
-        .v_pixel_write(v_pixel),
-        .color_write(G_in),
-        .color_read(G_out));
-    
-    pixel_memory #(
-        .h_size(h_size/reduction_factor),
-        .v_line(v_line/reduction_factor),
-        .color_depth(color_depth),
-        .ram_resetable(ram_resetable))
-    memory_blue (
-        .clk(clk),
-        .reset(reset),
-        .write_en(write_en),
-        .h_pixel_read(h_pixel_out),
-        .v_pixel_read(v_pixel_out),
-        .h_pixel_write(h_pixel),
-        .v_pixel_write(v_pixel),
-        .color_write(B_in),
-        .color_read(B_out));
+        .h_pixel_in(h_pixel),
+        .v_pixel_in(v_pixel),
+        .R_in(R_in),
+        .G_in(G_in),
+        .B_in(B_in),
+        .a_in(a_in),
+        .h_pixel_out(h_pixel_out),
+        .v_pixel_out(v_pixel_out),
+        .R_out(R_out),
+        .G_out(G_out),
+        .B_out(B_out),
+        .a_out());
 
 endmodule
 

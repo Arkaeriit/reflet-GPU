@@ -27,7 +27,7 @@ module reflet_VGA_tb ();
 
     reflet_VGA #(.color_depth(2), 
         .clk_freq(100000000), 
-        .bit_reduction(0)) vga (
+        .bit_reduction(3)) vga (
         .clk(clk),
         .reset(rst),
         //In
