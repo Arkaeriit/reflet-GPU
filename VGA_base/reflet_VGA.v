@@ -40,8 +40,6 @@ module reflet_VGA #(
     output [color_depth-1:0] B_out
     );
 
-    localparam reduction_factor = 2 ** bit_reduction;
-
     //Timing generator
     wire [$clog2(h_size)-bit_reduction-1:0] h_pixel_out;
     wire [$clog2(v_line)-bit_reduction-1:0] v_pixel_out;
