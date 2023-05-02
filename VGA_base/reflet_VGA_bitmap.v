@@ -33,7 +33,7 @@ module reflet_VGA_bitmap #(
     );
 
     localparam reduction_factor = 2 ** bit_reduction;
-    wire [color_depth*4-1:0] memory_in = {a_out, B_in, G_in, R_in};
+    wire [color_depth*4-1:0] memory_in = {a_in, B_in, G_in, R_in};
     wire [color_depth*4-1:0] memory_out;
     assign R_out = memory_out[color_depth*1-1:color_depth*0];
     assign G_out = memory_out[color_depth*2-1:color_depth*1];
