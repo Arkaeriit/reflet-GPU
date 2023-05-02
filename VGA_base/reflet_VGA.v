@@ -7,6 +7,10 @@
 |write_enable signal.               |
 \----------------------------------*/
 
+`define FONT_WIDTH  8 // TODO: cleanup this definition
+`define FONT_HEIGHT 8
+
+
 module reflet_VGA #(
     parameter clk_freq = 1000000,
     refresh_rate = 60,
@@ -25,13 +29,18 @@ module reflet_VGA #(
     input clk,
     input reset,
     //Pixel input
-    input write_en,
+    input write_bitmap,
+    input write_txt,
     input [$clog2(h_size)-bit_reduction-1:0] h_pixel,
     input [$clog2(v_line)-bit_reduction-1:0] v_pixel,
     input [color_depth-1:0] R_in,
     input [color_depth-1:0] G_in,
     input [color_depth-1:0] B_in,
     input [color_depth-1:0] a_in,
+    input [color_depth-1:0] R_bg_in,
+    input [color_depth-1:0] G_bg_in,
+    input [color_depth-1:0] B_bg_in,
+    input [7:0] char_in,
     //VGA output
     output h_sync,
     output v_sync,
@@ -39,6 +48,14 @@ module reflet_VGA #(
     output [color_depth-1:0] G_out,
     output [color_depth-1:0] B_out
     );
+
+    wire [color_depth-1:0] R_bitmap_out;
+    wire [color_depth-1:0] G_bitmap_out;
+    wire [color_depth-1:0] B_bitmap_out;
+    wire [color_depth-1:0] a_bitmap_out;
+    wire [color_depth-1:0] R_txt_out;
+    wire [color_depth-1:0] G_txt_out;
+    wire [color_depth-1:0] B_txt_out;
 
     //Timing generator
     wire [$clog2(h_size)-bit_reduction-1:0] h_pixel_out;
@@ -73,7 +90,7 @@ module reflet_VGA #(
     bitmap (
         .clk(clk),
         .reset(reset),
-        .write_en(write_en),
+        .write_en(write_bitmap),
         .h_pixel_in(h_pixel),
         .v_pixel_in(v_pixel),
         .R_in(R_in),
@@ -82,10 +99,41 @@ module reflet_VGA #(
         .a_in(a_in),
         .h_pixel_out(h_pixel_out),
         .v_pixel_out(v_pixel_out),
-        .R_out(R_out),
-        .G_out(G_out),
-        .B_out(B_out),
-        .a_out());
+        .R_out(R_bitmap_out),
+        .G_out(G_bitmap_out),
+        .B_out(B_bitmap_out),
+        .a_out(a_bitmap_out));
+
+    // Text layer
+    reflet_VGA_txt #(
+        .h_size(h_size),
+        .v_size(v_line),
+        .color_depth(color_depth),
+        .ram_resetable(ram_resetable),
+        .bit_reduction(bit_reduction)) // TODO: no need to be the same as the bitmap
+    txt (
+        .clk(clk),
+        .reset(reset),
+        .write_en(write_txt),
+        .h_txt_in(h_pixel[$clog2(h_size/`FONT_WIDTH)-bit_reduction-1:0]),
+        .v_txt_in(v_pixel[$clog2(v_line/`FONT_HEIGHT)-bit_reduction-1:0]),
+        .R_fg_in(R_in),
+        .G_fg_in(G_in),
+        .B_fg_in(B_in),
+        .R_bg_in(R_bg_in),
+        .G_bg_in(G_bg_in),
+        .B_bg_in(B_bg_in),
+        .char_in(char_in),
+        .h_pixel_out(h_pixel_out),
+        .v_pixel_out(v_pixel_out),
+        .R_out(R_txt_out),
+        .G_out(G_txt_out),
+        .B_out(B_txt_out));
+
+    // TODO: correct α blending
+    assign R_out = a_bitmap_out ? R_bitmap_out : R_txt_out;
+    assign G_out = a_bitmap_out ? G_bitmap_out : G_txt_out;
+    assign B_out = a_bitmap_out ? B_bitmap_out : B_txt_out;
 
 endmodule
 

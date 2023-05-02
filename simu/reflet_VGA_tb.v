@@ -25,18 +25,27 @@ module reflet_VGA_tb ();
         end
     end
 
-    reflet_VGA #(.color_depth(2), 
+    reflet_VGA #(
+        .color_depth(2), 
         .clk_freq(100000000), 
-        .bit_reduction(3)) vga (
+        .bit_reduction(3),
+        .ram_resetable(1)
+    ) vga (
         .clk(clk),
         .reset(rst),
         //In
-        .write_en(&cnt),
+        .write_bitmap(&cnt),
+        .write_txt(1'b0),
         .h_pixel(h_pixel),
         .v_pixel(v_pixel),
         .R_in(R_in),
         .G_in(G_in),
-        .B_in(B_in));
+        .B_in(B_in),
+        .a_in(2'h3),
+        .R_bg_in(R_in),
+        .G_bg_in(G_in),
+        .B_bg_in(B_in),
+        .char_in(8'h1));
 
     initial
     begin

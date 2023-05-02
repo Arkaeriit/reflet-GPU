@@ -40,7 +40,7 @@ module reflet_VGA_txt #(
     wire [color_depth-1:0] R_bg_out = memory_out[color_depth*4-1:color_depth*3];
     wire [color_depth-1:0] G_bg_out = memory_out[color_depth*5-1:color_depth*4];
     wire [color_depth-1:0] B_bg_out = memory_out[color_depth*6-1:color_depth*5];
-    wire [color_depth-1:0] txt_out  = memory_out[color_depth*6+7:color_depth*6];
+    wire [7:0] txt_out  = memory_out[color_depth*6+7:color_depth*6];
 
     wire [$clog2(h_size/`FONT_WIDTH)-bit_reduction-1:0] h_txt_out = h_pixel_out >> $clog2(`FONT_WIDTH);
     wire [$clog2(v_size/`FONT_HEIGHT)-bit_reduction-1:0] v_txt_out = v_pixel_out >> $clog2(`FONT_HEIGHT);
