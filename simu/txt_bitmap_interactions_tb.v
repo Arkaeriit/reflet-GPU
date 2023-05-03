@@ -18,7 +18,7 @@ module txt_bitmap_interactions_tb ();
     reg [1:0] R_bg_in = 2'b00;
     reg [1:0] G_bg_in = 2'b11;
     reg [1:0] B_bg_in = 2'b00;
-    reg [7:0] char = 8'h02;
+    reg [7:0] char = 8'hAE;
     
     reg write_txt = 0;
     reg write_bitmap = 0;

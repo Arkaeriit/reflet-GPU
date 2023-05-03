@@ -74,7 +74,7 @@ module reflet_VGA_txt #(
     end
     wire is_foreground;
 
-    tmp_font font (
+    public_pixel font (
         .char(char_out),
         .index(pixel_in_char),
         .is_foreground(is_foreground));
