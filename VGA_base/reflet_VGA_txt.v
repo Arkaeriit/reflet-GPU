@@ -40,7 +40,7 @@ module reflet_VGA_txt #(
     wire [color_depth-1:0] R_bg_out = memory_out[color_depth*4-1:color_depth*3];
     wire [color_depth-1:0] G_bg_out = memory_out[color_depth*5-1:color_depth*4];
     wire [color_depth-1:0] B_bg_out = memory_out[color_depth*6-1:color_depth*5];
-    wire [7:0] txt_out  = memory_out[color_depth*6+7:color_depth*6];
+    wire [7:0] char_out  = memory_out[color_depth*6+7:color_depth*6];
 
     wire [$clog2(h_size/`FONT_WIDTH)-bit_reduction-1:0] h_txt_out = h_pixel_out >> $clog2(`FONT_WIDTH);
     wire [$clog2(v_size/`FONT_HEIGHT)-bit_reduction-1:0] v_txt_out = v_pixel_out >> $clog2(`FONT_HEIGHT);
@@ -63,13 +63,19 @@ module reflet_VGA_txt #(
 
     // Each char in the font ROM is index from left to right and then from top
     // to bottom
-    wire [$clog2(`FONT_HEIGHT)-1:0] pixel_vertical_in_char = {(v_pixel_out & (`FONT_HEIGHT'd`FONT_HEIGHT-`FONT_HEIGHT'd1))};
-    wire [$clog2(`FONT_WIDTH)-1:0] pixel_horizontal_in_char = {(h_pixel_out & (`FONT_WIDTH'd`FONT_WIDTH-`FONT_WIDTH'd1))};
-    wire [$clog2(`FONT_WIDTH*`FONT_HEIGHT)-1:0] pixel_in_char = {pixel_vertical_in_char, pixel_horizontal_in_char};
+    reg [$clog2(`FONT_HEIGHT)-1:0] pixel_vertical_in_char;
+    reg [$clog2(`FONT_WIDTH)-1:0] pixel_horizontal_in_char;
+    reg [$clog2(`FONT_WIDTH*`FONT_HEIGHT)-1:0] pixel_in_char;
+    always @ (posedge clk) // As char_out is delayed by two clock cycles compared with the input, we want to delay pixel_in_char as well to ensure that the input of the font ROM are synchronized.
+    begin
+        pixel_vertical_in_char <= {(v_pixel_out & (`FONT_HEIGHT'd`FONT_HEIGHT-`FONT_HEIGHT'd1))};
+        pixel_horizontal_in_char <= {(h_pixel_out & (`FONT_WIDTH'd`FONT_WIDTH-`FONT_WIDTH'd1))};
+        pixel_in_char <= {pixel_vertical_in_char, pixel_horizontal_in_char};
+    end
     wire is_foreground;
 
     tmp_font font (
-        .char(txt_out),
+        .char(char_out),
         .index(pixel_in_char),
         .is_foreground(is_foreground));
 
