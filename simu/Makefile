@@ -1,36 +1,37 @@
 
 MODULES = ../misc_modules/reflet_counter.v ../misc_modules/reflet_ram_dual_port.v ../VGA_base/pixel_memory.v ../VGA_base/reflet_VGA.v ../VGA_base/VGA_timing_generation.v ../VGA_base/reflet_VGA_bitmap.v ../VGA_base/reflet_VGA_txt.v ../VGA_base/public_pixel.v
+TEST_BENCHES := reflet_VGA_tb txt_bitmap_interactions_tb VGA_timing_generation_tb
 
-all : VGA_timing_generation_tb.vcd reflet_VGA_tb.vcd txt_bitmap_interactions_tb.v
+all :
 
-VGA_timing_generation_tb.vvp : VGA_timing_generation_tb.v $(MODULES)
-	iverilog VGA_timing_generation_tb.v $(MODULES) -o VGA_timing_generation_tb.vvp
+define test_bench_template
+$(1).vvp: $$(MODULES) $(1).v
+	@echo "[IVERILOG] $(1).v"
+	@iverilog $$(MODULES) $(1).v -o $(1).vvp
 
-VGA_timing_generation_tb.vcd : VGA_timing_generation_tb.vvp
-	vvp VGA_timing_generation_tb.vvp
+$(1).vcd: $(1).vvp
+	@echo "[VDC]      $(1).vvp"
+	@vvp $$<
 
-VGA_timing_generation_tb : VGA_timing_generation_tb.vcd
-	gtkwave VGA_timing_generation_tb.vcd
+.PHONY: $(1)
+$(1): $(1).vcd
+	@echo "[GTKWAVE]  $(1).vcd"
+	@gtkwave $$<
 
-reflet_VGA_tb.vvp : reflet_VGA_tb.v $(MODULES)
-	iverilog reflet_VGA_tb.v $(MODULES) -o reflet_VGA_tb.vvp
+ALL_VCD += $(1).vcd
 
-reflet_VGA_tb.vcd : reflet_VGA_tb.vvp
-	vvp reflet_VGA_tb.vvp
+$(1)_clean:
+	rm -f $(1).vcd
+	rm -f $(1).vvp
 
-reflet_VGA_tb : reflet_VGA_tb.vcd
-	gtkwave reflet_VGA_tb.vcd
+.PHONY: $(1)_clean
+ALL_CLEAN += $(1)_clean
 
-txt_bitmap_interactions_tb.vvp : txt_bitmap_interactions_tb.v $(MODULES)
-	iverilog txt_bitmap_interactions_tb.v $(MODULES) -o txt_bitmap_interactions_tb.vvp
+endef
 
-txt_bitmap_interactions_tb.vcd : txt_bitmap_interactions_tb.vvp
-	vvp txt_bitmap_interactions_tb.vvp
+$(foreach tb, $(TEST_BENCHES), $(eval $(call test_bench_template, $(tb))))
 
-txt_bitmap_interactions_tb : txt_bitmap_interactions_tb.vcd
-	gtkwave txt_bitmap_interactions_tb.vcd
+all: $(ALL_VCD)
 
-clean :
-	rm -f *.vcd
-	rm -f *.vvp
+clean : $(ALL_CLEAN)
 
