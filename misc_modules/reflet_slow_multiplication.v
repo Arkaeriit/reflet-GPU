@@ -5,7 +5,7 @@
 |number can be given each clock cycle.|
 \------------------------------------*/
 
-module slow_multiplication #(
+module reflet_slow_multiplication #(
     parameter size = 16
     )(
     input clk,

@@ -13,7 +13,7 @@ module slow_multiplication_tb ();
     reg [5:0] in_2;
     wire [11:0] out;
 
-    slow_multiplication #(6) mult (
+    reflet_slow_multiplication #(6) mult (
         .clk(clk),
         .enable(1'b1),
         .in_1(in_1),
