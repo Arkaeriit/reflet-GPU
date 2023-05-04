@@ -1,6 +1,6 @@
 
-MODULES = ../misc_modules/reflet_counter.v ../misc_modules/reflet_ram_dual_port.v ../VGA_base/pixel_memory.v ../VGA_base/reflet_VGA.v ../VGA_base/VGA_timing_generation.v ../VGA_base/reflet_VGA_bitmap.v ../VGA_base/reflet_VGA_txt.v ../VGA_base/public_pixel.v ../misc_modules/reflet_slow_multiplication.v
-TEST_BENCHES := reflet_VGA_tb txt_bitmap_interactions_tb VGA_timing_generation_tb slow_multiplication_tb
+MODULES = ../misc_modules/reflet_counter.v ../misc_modules/reflet_ram_dual_port.v ../VGA_base/pixel_memory.v ../VGA_base/reflet_VGA.v ../VGA_base/VGA_timing_generation.v ../VGA_base/reflet_VGA_bitmap.v ../VGA_base/reflet_VGA_txt.v ../VGA_base/public_pixel.v ../misc_modules/reflet_slow_multiplication.v ../misc_modules/reflet_delay.v
+TEST_BENCHES := reflet_VGA_tb txt_bitmap_interactions_tb VGA_timing_generation_tb slow_multiplication_tb delay_tb
 
 all :
 
