@@ -41,6 +41,9 @@ module slow_multiplication_tb ();
         #20;
         in_1 = 60;
         in_2 = 40;
+        #2;
+        in_1 = 10;
+        in_2 = 10;
         #20;
         $finish;
     end
