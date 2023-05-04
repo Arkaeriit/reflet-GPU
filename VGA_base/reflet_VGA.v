@@ -57,6 +57,8 @@ module reflet_VGA #(
     wire [color_depth-1:0] G_txt_out;
     wire [color_depth-1:0] B_txt_out;
 
+    wire _h_sync, _v_sync;
+
     //Timing generator
     wire [$clog2(h_size)-bit_reduction-1:0] h_pixel_out;
     wire [$clog2(v_line)-bit_reduction-1:0] v_pixel_out;
@@ -75,8 +77,8 @@ module reflet_VGA #(
     timing (
         .clk(clk),
         .reset(reset),
-        .h_sync(h_sync),
-        .v_sync(v_sync),
+        .h_sync(_h_sync),
+        .v_sync(_v_sync),
         .h_pixel(h_pixel_out),
         .v_pixel(v_pixel_out));
 
@@ -130,10 +132,42 @@ module reflet_VGA #(
         .G_out(G_txt_out),
         .B_out(B_txt_out));
 
-    // TODO: correct α blending
-    assign R_out = a_bitmap_out ? R_bitmap_out : R_txt_out;
-    assign G_out = a_bitmap_out ? G_bitmap_out : G_txt_out;
-    assign B_out = a_bitmap_out ? B_bitmap_out : B_txt_out;
+    // α blending between the layers
+    alpha_blending #(color_depth) R_blending (
+        .clk(clk),
+        .enable(reset),
+        .color_1(R_bitmap_out),
+        .color_1_alpha(a_bitmap_out),
+        .color_2(R_txt_out),
+        .color_out(R_out));
+    alpha_blending #(color_depth) G_blending (
+        .clk(clk),
+        .enable(reset),
+        .color_1(G_bitmap_out),
+        .color_1_alpha(a_bitmap_out),
+        .color_2(G_txt_out),
+        .color_out(G_out));
+    alpha_blending #(color_depth) B_blending (
+        .clk(clk),
+        .enable(reset),
+        .color_1(B_bitmap_out),
+        .color_1_alpha(a_bitmap_out),
+        .color_2(B_txt_out),
+        .color_out(B_out));
+
+    // h_sync and v_sync must be delayed a bit to be in sync with the color
+    // data. The color is slowed by two clock cycle to be fetched from memory
+    // and then, `color_depth+1` clock cycles to be α blended.
+    reflet_delay #(2 + color_depth+1) delay_h_sync (
+        .clk(clk),
+        .enable(reset),
+        .in(_h_sync),
+        .out(h_sync));
+    reflet_delay #(2 + color_depth) delay_v_sync (
+        .clk(clk),
+        .enable(reset),
+        .in(_v_sync),
+        .out(v_sync));
 
 endmodule
 
