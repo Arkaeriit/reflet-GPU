@@ -1,7 +1,8 @@
-/*
-* This module tests the slow multiplication module by simply feeding it
-* numbers and waiting a bit.
-*/
+/*------------------------------------\
+|This module tests the slow           |
+|multiplication module by simply      |
+|feeding it numbers and waiting a bit.|
+\------------------------------------*/
 
 module slow_multiplication_tb ();
 
@@ -27,7 +28,7 @@ module slow_multiplication_tb ();
         $dumpvars(0, slow_multiplication_tb);
         for(i = 0; i<5; i=i+1)
         begin
-            $dumpvars(0, mult.in_1_history[i]);
+            $dumpvars(0, mult.in_1_shift[i]);
             $dumpvars(0, mult.in_2_shift[i]);
             $dumpvars(0, mult.tmp_result[i]);
         end
